@@ -5,17 +5,21 @@ import { SERVER, PROXY, LOGGING } from './config/constants.js';
 
 // ==================== LOGGER MIDDLEWARE ====================
 
-// Create a pino logger instance
+// Create a pino logger instance - conditionally using pretty transport for local development only
+const isDevelopment = SERVER.NODE_ENV === 'development';
+
 export const logger = pino.default({
   level: LOGGING.LEVEL,
-  transport: {
-    target: 'pino-pretty',
-    options: {
-      colorize: true,
-      translateTime: 'SYS:standard',
-      ignore: 'pid,hostname',
+  ...(isDevelopment && {
+    transport: {
+      target: 'pino-pretty',
+      options: {
+        colorize: true,
+        translateTime: 'SYS:standard',
+        ignore: 'pid,hostname',
+      },
     },
-  },
+  }),
 });
 
 /**
